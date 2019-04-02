@@ -3,7 +3,8 @@ FROM ubuntu:latest
 ENV CONSUL_VERSION 1.4.4
 ENV UI_VERSION 1.4.4
 
-RUN apt-get update && \
+RUN apt-get update -y --fix-missing && \
+    apt-get upgrade -y && \
     apt-get install ca-certificates curl unzip -y && \
     apt-get autoclean && \
     apt-get --purge -y autoremove && \
