@@ -1,26 +1,18 @@
-FROM golang:1.6.2-alpine
-MAINTAINER Ryan Hartje <ryan@ryanhartje.com>
+FROM ubuntu:latest
 
-ENV GOPATH="/go"
-
-RUN apk --update add git \
-    make \ 
-    libcap && \
-    mkdir -p $GOPATH/src/github.com/hashicorp/vault && \
-    git clone https://github.com/hashicorp/vault \
-    $GOPATH/src/github.com/hashicorp/vault && \
-    cd $GOPATH/src/github.com/hashicorp/vault && \
-    go get ./... && \
-    make bootstrap && \
-    make && \
-    # setcap cap_ipc_lock=+ep $(readlink -f $(which vault)) && \
-    mkdir /etc/vault
+WORKDIR /opt/
+RUN apt-get update -y --fix-missing && \
+    apt-get upgrade -y && \
+    apt-get install wget unzip -y && \
+    wget https://releases.hashicorp.com/vault/1.1.0/vault_1.1.0_linux_arm64.zip && \
+    cd /opt/ && \
+    unzip vault_1.1.0_linux_arm64.zip
 
 COPY files/etc/vault/config.json /etc/vault/config.json
 COPY files/bootstrap.sh /root/bootstrap.sh
 
 EXPOSE 8200 8500 
-#ENTRYPOINT ["/go/bin/vault","server","-config=/etc/vault/config.json","--log-level=debug"]
+
 RUN ["/bin/sh","/root/bootstrap.sh"]
-ENTRYPOINT ["/go/bin/vault","server","-config=/etc/vault/config.json","--log-level=debug"]
-#ENTRYPOINT ["/sbin/init"] 
+
+ENTRYPOINT ["/opt/vault","server","-config=/etc/vault/config.json","--log-level=debug"]
