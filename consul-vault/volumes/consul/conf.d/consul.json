@@ -1,9 +1,10 @@
 {  
-   "client_addr":"0.0.0.0",
+   "client_addr": "0.0.0.0",
+   "log_level": "DEBUG",
    "datacenter": "localhost",
    "data_dir":"/consul/data",
-   "ports":{  
+   "ports": {  
       "dns":53
    },
-   "ui_dir":"/consul/ui"
+   "ui_dir": "/consul/ui"
 }
