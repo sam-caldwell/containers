@@ -82,4 +82,6 @@ Key (will be hidden):
 
 Next, check your Consul UI to ensure that the vault service has changed from a failed service to a passing service:
 
-http://localhost:8500/ui/
+http://127.0.0.1:8500/ui/
+
+Note that http://localhost:8500/ui/ *may not* work on your machine.
