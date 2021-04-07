@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:rolling
 
 WORKDIR /opt/
 RUN apt-get update -y --fix-missing && \
