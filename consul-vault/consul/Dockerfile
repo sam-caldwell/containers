@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:20.10
 
 ENV CONSUL_VERSION 1.4.4
 ENV UI_VERSION 1.4.4
