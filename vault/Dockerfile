@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:20.10
 
 WORKDIR /opt/
 RUN apt-get update -y --fix-missing && \
