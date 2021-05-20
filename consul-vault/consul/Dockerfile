@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM ubuntu:groovy-20210416
 
 ENV CONSUL_VERSION 1.4.4
 ENV UI_VERSION 1.4.4
