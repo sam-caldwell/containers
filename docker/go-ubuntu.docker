@@ -1,0 +1,60 @@
+ARG OPSYS="alpine"
+ARG OPSYS_VER="latest"
+
+FROM ${OPSYS}:${OPSYS_VER} AS base
+ARG OPSYS
+ARG OPSYS_VER
+
+ARG LANG
+ARG LANG_VER
+
+LABEL OPSYS=${OPSYS}
+LABEL OPSYS_VER=${OPSYS_VER}
+LABEL LANG=${LANG}
+LABEL LANG_VER=${LANG_VER}
+
+#
+# We install nothing here that we wouldn't want in
+# both the builder and the runtime.
+#
+
+USER service
+
+FROM base AS builder
+#
+# This is where we build an artifact.
+#
+# The implementer with a specific need may build from this builder image
+# and add specific build steps at the end.
+#
+USER root
+RUN apt-get update -y
+RUN if [ "${LANG_VER}" = "latest" ]; then \
+        apt-get install -y --no-install-recommends golang-go; \
+    else \
+        apt-get install -y --no-install-recommends wget && \
+        wget https://go.dev/dl/go${LANG_VER}.src.tar.gz && \
+        rm -rf /usr/local/go && \
+        tar -C /usr/local -xzf go${LANG_VER}.linux-amd64.tar.gz && \
+        rm go${LANG_VER}.linux-amd64.tar.gz && \
+        ln -sf /usr/local/go/bin/go /usr/bin/go && \
+        ln -sf /usr/local/go/bin/gofmt /usr/bin/gofmt && \
+        apt-get remove -y --auto-remove wget; \
+    fi
+
+RUN go version
+# ToDo: Build your project here.
+#       For standardization, the payload application should be named /opt/application
+#       which can be copied into the runtime stage along with any dependencies.
+USER service
+
+FROM base AS runtime
+USER service
+ENTRYPOINT [ "/opt/application" ]
+CMD [ "/opt/application" ]
+#
+# The implementer can derive from this runtime environment
+# and use COPY --from=builder /opt/<artifact_name(s)> /opt/
+#
+# The implementer should also define CMD and ENTRYPOINT if
+# not using the /opt/application standard artifact name.

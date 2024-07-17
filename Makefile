@@ -31,10 +31,8 @@ build:
 	make build/alpine:latest/python:latest && \
 	make build/ubuntu:latest/python:latest && \
 	make build/ubuntu:24.04/python:latest && \
-	#make build/alpine:latest/go:latest && \
-	#make build/alpine:3.20.1/go:3.12.3 && \
+	make build/alpine:latest/go:latest && \
 	make build/ubuntu:24.04/go:latest && \
-	make build/ubuntu:24.04/go:1.22.4 && \
 	echo "ok"
 
 

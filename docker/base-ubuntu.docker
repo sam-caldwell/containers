@@ -20,7 +20,7 @@ RUN apt-get update -y && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends apt-transport-https ca-certificates
 
-RUN update-ca-certificates && \
+RUN /usr/sbin/update-ca-certificates
 
 RUN userdel news || true;\
     userdel games || true;\
