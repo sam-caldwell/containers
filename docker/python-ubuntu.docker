@@ -1,0 +1,42 @@
+ARG OPSYS="ubuntu"
+ARG OPSYS_VER="latest"
+
+FROM ${OPSYS}:${OPSYS_VER} AS base
+ARG OPSYS
+ARG OPSYS_VER
+
+ARG LANG
+ARG LANG_VER
+
+LABEL OPSYS=${OPSYS}
+LABEL OPSYS_VER=${OPSYS_VER}
+LABEL LANG=${LANG}
+LABEL LANG_VER=${LANG_VER}
+
+USER root
+
+RUN apt-get update -y
+RUN if [ "${LANG_VER}" = "latest" ]; then \
+        apt-get install -y --no-install-recommends python3 python3-pip; \
+    else \
+        apt-get install -y --no-install-recommends software-properties-common && \
+        add-apt-repository -y ppa:deadsnakes/ppa && \
+        apt-get update -y && \
+        apt-get install -y --no-install-recommends "python${LANG_VER}-full" && \
+        ln -sf /usr/bin/python${LANG_VER} /usr/bin/python && \
+        ln -sf /usr/bin/python${LANG_VER} /usr/bin/python3 && \
+        apt-get install -y --no-install-recommends python3-pip; \
+    fi
+
+
+#RUN pip3 install --upgrade pip3
+
+USER service
+
+FROM base AS builder
+USER root
+# Do nothing.  Python 'builder' is also runtime.  This is just for consistency.
+
+FROM base AS runtime
+USER service
+# Do nothing.  Python 'builder' is also runtime.  This is just for consistency.

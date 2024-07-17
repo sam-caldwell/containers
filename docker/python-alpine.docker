@@ -1,0 +1,35 @@
+ARG OPSYS="alpine"
+ARG OPSYS_VER="latest"
+
+FROM ${OPSYS}:${OPSYS_VER} AS base
+ARG OPSYS
+ARG OPSYS_VER
+
+ARG LANG
+ARG LANG_VER
+
+LABEL OPSYS=${OPSYS}
+LABEL OPSYS_VER=${OPSYS_VER}
+LABEL LANG=${LANG}
+LABEL LANG_VER=${LANG_VER}
+
+USER root
+
+RUN apk update
+RUN if [ "${LANG_VER}" = "latest" ]; then \
+        apk add python3 py3-pip; \
+    else \
+        echo 'older versions not supported at this time'; \
+        exit 1; \
+    fi
+
+
+USER service
+
+FROM base AS builder
+USER root
+# Do nothing.  Python 'builder' is also runtime.  This is just for consistency.
+
+FROM base AS runtime
+USER service
+# Do nothing.  Python 'builder' is also runtime.  This is just for consistency.
