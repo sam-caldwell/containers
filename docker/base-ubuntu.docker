@@ -1,0 +1,45 @@
+ARG OPSYS="ubuntu"
+ARG OPSYS_VER="latest"
+
+FROM ${OPSYS}:${OPSYS_VER} AS base
+ARG OPSYS
+ARG OPSYS_VER
+
+LABEL OPSYS=${OPSYS}
+LABEL OPSYS_VER=${OPSYS_VER}
+
+USER root
+
+WORKDIR /opt
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime
+
+RUN apt-get update -y && \
+    apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends apt-transport-https ca-certificates
+
+RUN update-ca-certificates && \
+
+RUN userdel news || true;\
+    userdel games || true;\
+    userdel ftp || true;\
+    userdel sshd || true; \
+    userdel guest || true; \
+    userdel ntp || true; \
+    userdel mail || true; \
+    userdel irc || true; \
+    userdel lp || true
+
+RUN delgroup floppy || true; \
+    delgroup cdrom || true; \
+    delgroup tape || true
+
+RUN groupadd --gid 2000 service && \
+    useradd --home-dir /opt --shell /sbin/nologin -g service --uid 2000 service
+
+RUN apt-get autoremove -y && \
+    apt-get clean -y
+
+USER service

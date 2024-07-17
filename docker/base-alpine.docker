@@ -1,0 +1,33 @@
+ARG OPSYS="alpine"
+ARG OPSYS_VER="latest"
+
+FROM ${OPSYS}:${OPSYS_VER} AS base
+ARG OPSYS
+ARG OPSYS_VER
+
+LABEL OPSYS=${OPSYS}
+LABEL OPSYS_VER=${OPSYS_VER}
+
+USER root
+
+WORKDIR /opt
+
+RUN apk update
+
+RUN deluser news || true; \
+    deluser games || true \
+    deluser ftp || true \
+    deluser sshd || true \
+    deluser guest || true \
+    deluser ntp || true \
+    deluser mail || true \
+    deluser lp || true
+
+RUN delgroup floppy || true; \
+    delgroup cdrom || true; \
+    delgroup tape || true
+
+RUN addgroup -g 1000 service && \
+    adduser -h /opt -s /sbin/nologin -D -H -G service -u 1000 service
+
+USER service
